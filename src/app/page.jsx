@@ -3,9 +3,11 @@ import { FaReact } from "react-icons/fa";
 import { IoShieldCheckmarkSharp } from "react-icons/io5";
 import { SiMongodb } from "react-icons/si";
 import AuthButton from "@/components/AuthButton";
+import UseCard from "@/components/UseCard";
 export default function Home() {
   return (
     <div className="min-h-screen relative flex flex-col justify-center items-center gap-5 ">
+      <UseCard />
       <div className=" flex gap-5 space-x-4 items-center">
         <FaReact
           size={40}
