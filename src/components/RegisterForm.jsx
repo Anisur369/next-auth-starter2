@@ -1,7 +1,9 @@
 "use client";
 
+import { postUser } from "@/actions/server/auth";
+
 const RegisterForm = () => {
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const form = e.target;
@@ -15,7 +17,7 @@ const RegisterForm = () => {
       bloodgroup: form.bloodgroup.value,
     };
 
-    console.log("Submitted Data:", formData);
+    const user= await postUser(formData);
   };
 
   const inputClass =
