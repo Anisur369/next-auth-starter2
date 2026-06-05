@@ -18,6 +18,11 @@ const RegisterForm = () => {
     };
 
     const user= await postUser(formData);
+    if (user?.success) {
+      alert(user.message);
+    } else {
+      alert(user?.message || "Registration failed. Please try again.");
+    }
   };
 
   const inputClass =
