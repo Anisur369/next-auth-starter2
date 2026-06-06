@@ -24,10 +24,15 @@ export async function postUser(payload) {
         role: "user",
         password: hashedPassword,
     };
-    const user = await dbConnect("users").insertOne(newUser);
-    return {
-        success: true,
-        message: "User registered successfully.",
-        user,
+    const result = await dbConnect("users").insertOne(newUser);
+    if (result.acknowledged) {
+        return {
+            success: true,
+            message: "User registered successfully.",
+        };
     }
+    return {
+        success: false,
+        message: "Failed to register user.",
+    };
 };

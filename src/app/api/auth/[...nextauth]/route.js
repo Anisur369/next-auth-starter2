@@ -41,6 +41,7 @@ callbacks: {
   async jwt({ token, user, account, profile, isNewUser }) {
     console.log(user.role);
     if(user) {
+      token.name = user.name;
       token.role = user.role;
     }
     return token
