@@ -21,7 +21,7 @@ providers: [
       if (!isPasswordOk) {
         return null;
       }
-      return { id: user._id, email: user.email };
+      return user;
     }
   })
 ],
@@ -34,14 +34,14 @@ callbacks: {
   },
   async session({ session, token, user }) {
     if (token) {
+      session.email = token.email;
       session.role = token.role;
     }
     return session
   },
   async jwt({ token, user, account, profile, isNewUser }) {
-    console.log(user.role);
     if(user) {
-      token.name = user.name;
+      token.email = user.email;
       token.role = user.role;
     }
     return token

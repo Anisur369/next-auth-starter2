@@ -1,12 +1,16 @@
+"use client";
 import Link from "next/link";
 import LoginButton from "./LoginButton";
+import { signOut, useSession } from "next-auth/react";
 
 const AuthButton = () => {
-    const session = false;
+    const session = useSession();
     return (
       <div className="flex gap-5">
-        {session ? (
-          <button className="btn">Logout</button>
+        {session.status === "authenticated" ? (
+          <button className="btn" onClick={() => signOut()}>
+            Logout
+          </button>
         ) : (
             <>
             <LoginButton />
