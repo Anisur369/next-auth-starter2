@@ -1,8 +1,10 @@
 "use client";
+import { useRouter } from "next/navigation";
 
 import { postUser } from "@/actions/server/auth";
 
 const RegisterForm = () => {
+  const router = useRouter();
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -20,6 +22,8 @@ const RegisterForm = () => {
     const user= await postUser(formData);
     if (user?.success) {
       alert(user.message);
+      form.reset();
+      router.push("/api/auth/signin");
     } else {
       alert(user?.message || "Registration failed. Please try again.");
     }

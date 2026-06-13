@@ -1,25 +1,32 @@
 import { NextResponse } from 'next/server';
 import { getToken } from "next-auth/jwt";
 const privateRoutes = ["/private", "/private/:path*"];
+const adminRoutes = ["/admin", "/admin/:path*"];
  
 // This function can be marked `async` if using `await` inside
 export async function proxy(req) {
     const token = await getToken({ req });
-    const isAuthenticated = Boolean(token);
-    const isUser = token?.role === "editor";
-    if (isAuthenticated && !isUser) {
-        return NextResponse.redirect(new URL('/home', req.url));
-    }
     const { pathname } = req.nextUrl;
+    const isAuthenticated = Boolean(token);
+    const isUser = token?.role === "user";
+    const isAdmin = token?.role === "admin";
     
     const isPrivateRoute = privateRoutes.some((route) => pathname.startsWith(route));
 
+    const isAdminRoute = adminRoutes.some((route) => pathname.startsWith(route));
+    
     if (isPrivateRoute && !isAuthenticated) {
         const loginUrl = new URL('/api/auth/signin', req.url);
         loginUrl.searchParams.set('callbackUrl', pathname);
         return NextResponse.redirect(loginUrl);
     }
-//   return NextResponse.redirect(new URL('/home', req.url))
+
+
+
+    if ( isAdminRoute && !isAdmin) {
+        return NextResponse.rewrite(new URL('/forbidden', req.url));
+    }
+
     return NextResponse.next();
 }
  
@@ -27,5 +34,5 @@ export async function proxy(req) {
 // export default function proxy(request) { ... }
  
 export const config = {
-  matcher: ["/private", "/private/:path*"],
+  matcher: ["/private", "/private/:path*", "/admin", "/admin/:path*"],
 }
