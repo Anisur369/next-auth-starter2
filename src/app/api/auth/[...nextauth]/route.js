@@ -2,6 +2,7 @@ import NextAuth from "next-auth";
 import bcrypt from "bcrypt";
 import { dbConnect } from "@/lib/dbConnect";
 import GoogleProvider from "next-auth/providers/google";
+import GitHubProvider from "next-auth/providers/github";
 import CredentialsProvider from "next-auth/providers/credentials";
 
 export const authOptions = {
@@ -29,10 +30,27 @@ providers: [
   GoogleProvider({
     clientId: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET
-  })
+  }),
+  GitHubProvider({
+    clientId: process.env.GITHUB_ID,
+    clientSecret: process.env.GITHUB_SECRET
+  }),
 ],
 callbacks: {
   async signIn({ user, account, profile, email, credentials }) {
+    const payload = { ...user, email: user.email, provider: account.provider, providerId: account.providerId, role: "user" };
+    console.log("Payload:", payload);
+
+    // if(!user?.email) {
+    //   return false
+    // }
+    const existingUser = await dbConnect("users").findOne({ email: user.email });
+
+    if (!existingUser) {
+      await dbConnect("users").insertOne(payload);
+      return true
+    }
+
     return true
   },
   // async redirect({ url, baseUrl }) {
